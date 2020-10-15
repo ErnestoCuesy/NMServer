@@ -96,22 +96,30 @@ function generateTableRow(doc, y, c1, c2, c3) {
         .text(c3, 280, y, { width: 90, align: "right" });
 }
 
-function generateTableHeader(doc) {
+function generateTableHeader(doc, pageNumber) {
+    let firstRow = 200;
+    if (pageNumber > 1) {
+        firstRow = 130;
+    }
     doc
         .fontSize(10)
-        .text('Date', 50, 200)
-        .text('Order number', 150, 200)
-        .text('Amount', 280, 200, { width: 90, align: "center" });
+        .text('Date', 50, firstRow)
+        .text('Order number', 150, firstRow)
+        .text('Amount', 280, firstRow, { width: 90, align: "center" });
 }
 
 function generateInvoiceTable(doc, invoice) {
     let i = 0;
-    let invoiceTableTop = 200;
     let rowCounter = 0;
+    let pageCounter = 1;
+    let invoiceTableTop = 200;
   
-    generateTableHeader(doc);
+    generateTableHeader(doc, pageCounter);
     for (i = 0; i < invoice.items.length; i++) {
       const item = invoice.items[i];
+      if (pageCounter > 1) {
+        invoiceTableTop = 130;
+      }
       const position = invoiceTableTop + (rowCounter + 1) * 15;
       generateTableRow(
         doc,
@@ -121,10 +129,20 @@ function generateInvoiceTable(doc, invoice) {
         new Number(item.orderSubtotal).toFixed(2),
       );
       rowCounter++;
-      if (rowCounter > 30) {
-          rowCounter = 0;
-          doc.addPage();
-          generateTableHeader(doc);
+      if (pageCounter > 1) {
+        if (rowCounter > 35) {
+            rowCounter = 0;
+            pageCounter++;
+            doc.addPage();
+            generateTableHeader(doc, pageCounter);
+        }  
+      } else {
+        if (rowCounter > 30) {
+            rowCounter = 0;
+            pageCounter++;
+            doc.addPage();
+            generateTableHeader(doc, pageCounter);
+        }  
       }
     }
 }
