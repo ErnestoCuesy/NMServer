@@ -148,6 +148,7 @@ function generateInvoiceTable(doc, invoice) {
 }
   
 exports.queryCollection = functions.https.onRequest(async (request, response) => {
+    // Test
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
     console.log('Current YM: ', currentYear, currentMonth);
